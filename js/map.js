@@ -1,5 +1,10 @@
 'use strict';
 
+var map = document.querySelector('.map');
+map.classList.remove('map--faded');
+
+var QUANTITY_USERS = 8;
+
 var HOTEL_TITLE = [
   'Большая уютная квартира',
   'Маленькая неуютная квартира',
@@ -15,7 +20,7 @@ var MIN_PRICE = 1000;
 
 var MAX_PRICE = 100000;
 
-var MIN_GUESTS = 1;
+var MIN_GUESTS = 0;
 
 var MAX_GUESTS = 6;
 
@@ -60,20 +65,22 @@ var Y_AXIS_MIN = 130;
 
 var Y_AXIS_MAX = 630;
 
+var X_AXIS_MIN = 100;
+
+var X_AXIS_MAX = 1000;
+
 function compareRandom() {
   return Math.random() - 0.5;
 }
 
-var mixedArray = function (arr) {
+var getMixedArray = function (arr) {
   arr.sort(compareRandom);
   return arr;
 };
 
 var getHotel = function () {
-  var hotelFeatures = [];
-  for (var j = 0; j < getRandomNumber(0, HOTEL_FEATURES.length); j++) {
-    hotelFeatures[j] = HOTEL_FEATURES[getRandomElementArray(HOTEL_FEATURES)];
-  }
+  var locationX = getRandomNumber(X_AXIS_MIN, X_AXIS_MAX);
+  var locationY = getRandomNumber(Y_AXIS_MIN, Y_AXIS_MAX);
   var hotel = {
     'author': {
       'avatar': 'img/avatars/user0' + (i + 1) + '.png',
@@ -81,30 +88,29 @@ var getHotel = function () {
 
     'offer': {
       'title': HOTEL_TITLE[i],
-      'address': '',
+      'address': locationX + ', ' + locationY,
       'price': getRandomNumber(MIN_PRICE, MAX_PRICE),
       'type': HOTEL_TYPE[getRandomElementArray(HOTEL_TYPE)],
       'rooms': getRandomNumber(MIN_ROOMS, MAX_ROOMS),
       'guests': getRandomNumber(MIN_GUESTS, MAX_GUESTS),
       'checkin': HOTEL_CHECKIN[getRandomElementArray(HOTEL_CHECKIN)],
       'checkout': HOTEL_CHECKOUT[getRandomElementArray(HOTEL_CHECKOUT)],
-      'features': getUniqueArray(hotelFeatures),
+      'features': getUniqueArray(getRandomLengthArray(HOTEL_FEATURES)),
       'description': '',
-      'photos': mixedArray(HOTEL_PHOTOS),
+      'photos': getMixedArray(HOTEL_PHOTOS),
     },
 
     'location': {
-      'x': '',
-      'y': getRandomNumber(Y_AXIS_MIN, Y_AXIS_MAX),
+      'x': locationX,
+      'y': locationY,
     },
   };
 
-  hotel.offer.address = hotel.location.x + ', ' + hotel.location.y;
   return hotel;
 };
 
 var hotels = [];
-for (var i = 0; i < 8; i++) {
+for (var i = 0; i < QUANTITY_USERS; i++) {
   hotels[i] = getHotel();
 }
 
@@ -114,6 +120,14 @@ function getRandomNumber(min, max) {
 
 function getRandomElementArray(arr) {
   return Math.floor(Math.random() * arr.length);
+}
+
+function getRandomLengthArray(arr) {
+  var outArr = [];
+  for (var j = 0; j < getRandomNumber(0, arr.length); j++) {
+    outArr[j] = arr[getRandomElementArray(arr)];
+  }
+  return outArr;
 }
 
 function getUniqueArray(arr) {
